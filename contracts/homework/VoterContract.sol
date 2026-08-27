@@ -8,13 +8,18 @@ struct Proposal {
 }
 
 contract VoterContract {
-    Proposal[] proposals; // 提案列表
-    mapping(string => uint) proposalIndexs; // 提案索引
-    mapping(string => bool) proposalExist; // 提案是否存在
+    address immutable owner;
+    Proposal[] internal proposals; // 提案列表
+    mapping(string => uint) internal proposalIndexs; // 提案索引
+    mapping(string => bool) internal proposalExist; // 提案是否存在
 
     // 投票数量
-    mapping(address => uint8) public voters; // 每个人的票数
-    mapping(address => mapping(string => bool)) public voted; // 已经投票的数据
+    mapping(address => uint8) internal voters; // 每个人的票数
+    mapping(address => mapping(string => bool)) internal voted; // 已经投票的数据
+
+    constructor(){
+        owner = msg.sender;
+    }
 
     function addProposal(string calldata proposalName) public {
         require(!proposalExist[proposalName], "has existed proposalName");
@@ -22,6 +27,13 @@ contract VoterContract {
         Proposal storage proposal = proposals.push();
         proposal.name = proposalName;
         proposalIndexs[proposalName] = proposals.length - 1;
+        proposalExist[proposalName] = true;
+    }
+
+    function addVoteNumber(address addr, uint8 number) public {
+        require(msg.sender == owner, "not owner");
+        require(number >= 0,"nubmer must gte zero");
+        voters[addr] += number;
     }
 
     function vote(string calldata proposalName) public {
@@ -32,9 +44,11 @@ contract VoterContract {
 
         voted[msg.sender][proposalName] = true; // 投票
         voters[msg.sender] -= 1; // 扣出票数
+
         Proposal storage proposal = proposals[proposalIndexs[proposalName]];
-        proposal.voterIndexs[msg.sender] = proposal.voters.length - 1;
+
         proposal.voters.push(msg.sender);
+        proposal.voterIndexs[msg.sender] = proposal.voters.length - 1;
     }
 
     function cancel(string calldata proposalName) public {
@@ -56,7 +70,7 @@ contract VoterContract {
             // 把最后一个人交换下位置
             proposal.voters[index] = proposal.voters[proposalVoterLength - 1];
             proposal.voterIndexs[
-                proposal.voters[proposalVoterLength - 1]
+            proposal.voters[proposalVoterLength - 1]
             ] = index;
         }
         // 清理最后一个数据
@@ -79,5 +93,4 @@ contract VoterContract {
         }
         return winName;
     }
-    
 }
