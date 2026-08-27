@@ -8,56 +8,67 @@ struct Proposal {
 }
 
 contract VoterContract {
-    Proposal[] proposals; // 提案列表
-    mapping(string => uint) proposalIndexs; // 提案索引
-    mapping(string => bool) proposalExist; // 提案是否存在
+    address internal immutable owner;
+    Proposal[] internal proposals; // 提案列表
+    mapping(string => uint256) internal proposalIndexs; // 提案索引
 
     // 投票数量
-    mapping(address => uint8) public voters; // 每个人的票数
-    mapping(address => mapping(string => bool)) public voted; // 已经投票的数据
+    mapping(address => uint256) internal voteNumbers; // 每个人的票数
+    mapping(address => mapping(uint256 => bool)) internal voted; // 个人已经投票的数据
+
+    constructor() {
+        owner = msg.sender;
+    }
 
     function addProposal(string calldata proposalName) public {
-        require(!proposalExist[proposalName], "has existed proposalName");
+        require(msg.sender == owner, "not owner");
+        require(proposalIndexs[proposalName] == 0, "has existed proposalName");
+
         // 这里 Proposal 有 storage 类型的,需要特殊处理,不能直接 new
         Proposal storage proposal = proposals.push();
         proposal.name = proposalName;
-        proposalIndexs[proposalName] = proposals.length - 1;
+        proposalIndexs[proposalName] = proposals.length;
     }
 
-    function vote(string calldata proposalName) public {
-        require(proposalExist[proposalName], "not existed proposalName");
+    function addVoteNumber(address addr, uint256 number) public {
+        require(msg.sender == owner, "not owner");
+        voteNumbers[addr] += number;
+    }
 
-        require(voters[msg.sender] > 0, "not enough voter");
-        require(!voted[msg.sender][proposalName], "has voted");
+    function vote(uint256 proposalId) public {
+        require(proposalId < proposals.length, "not existed proposalName");
 
-        voted[msg.sender][proposalName] = true; // 投票
-        voters[msg.sender] -= 1; // 扣出票数
-        Proposal storage proposal = proposals[proposalIndexs[proposalName]];
-        proposal.voterIndexs[msg.sender] = proposal.voters.length - 1;
+        Proposal storage proposal = proposals[proposalId];
+
+        require(voteNumbers[msg.sender] > 0, "not enough voter");
+        require(!voted[msg.sender][proposalId], "has voted");
+
+        voted[msg.sender][proposalId] = true; // 投票
+        voteNumbers[msg.sender] -= 1; // 扣出票数
+
         proposal.voters.push(msg.sender);
+        proposal.voterIndexs[msg.sender] = proposal.voters.length - 1;
     }
 
-    function cancel(string calldata proposalName) public {
-        require(proposalExist[proposalName], "not existed proposalName");
-        require(voted[msg.sender][proposalName], "not voted");
+    function cancel(uint256 proposalId) public {
+        require(proposalId < proposals.length, "not existed proposalName");
 
-        voted[msg.sender][proposalName] = false; // 取消投票
-        voters[msg.sender] += 1; // 加票数
+        Proposal storage proposal = proposals[proposalId];
+        require(voted[msg.sender][proposalId], "not voted");
+
+        voted[msg.sender][proposalId] = false; // 取消投票
+        voteNumbers[msg.sender] += 1; // 加票数
 
         // 维护投票数据
-        Proposal storage proposal = proposals[proposalIndexs[proposalName]];
-        uint proposalVoterLength = proposal.voters.length;
+        uint256 last = proposal.voters.length - 1;
+        // 当前操作人的列表索引
+        uint256 index = proposal.voterIndexs[msg.sender];
 
         // 如果只有最后一个人投票了
-        if (proposalVoterLength > 1) {
-            // 当前操作人的列表索引
-            uint index = proposal.voterIndexs[msg.sender];
-
-            // 把最后一个人交换下位置
-            proposal.voters[index] = proposal.voters[proposalVoterLength - 1];
-            proposal.voterIndexs[
-                proposal.voters[proposalVoterLength - 1]
-            ] = index;
+        if (index != last) {
+            // 把最后一个人换到需要删除的 index 上
+            proposal.voters[index] = proposal.voters[last];
+            proposal.voterIndexs[proposal.voters[last]] = index;
         }
         // 清理最后一个数据
         proposal.voters.pop();
@@ -79,5 +90,4 @@ contract VoterContract {
         }
         return winName;
     }
-    
 }
