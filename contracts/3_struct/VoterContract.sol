@@ -20,7 +20,7 @@ contract VoterContract {
         owner = msg.sender;
     }
 
-    function addProposal(string calldata proposalName) public {
+    function addProposal(string calldata proposalName) external {
         require(msg.sender == owner, "not owner");
         require(proposalIndexs[proposalName] == 0, "has existed proposalName");
 
@@ -30,12 +30,12 @@ contract VoterContract {
         proposalIndexs[proposalName] = proposals.length;
     }
 
-    function addVoteNumber(address addr, uint256 number) public {
+    function addVoteNumber(address addr, uint256 number) external {
         require(msg.sender == owner, "not owner");
         voteNumbers[addr] += number;
     }
 
-    function vote(uint256 proposalId) public {
+    function vote(uint256 proposalId) external {
         require(proposalId < proposals.length, "not existed proposalName");
 
         Proposal storage proposal = proposals[proposalId];
@@ -50,7 +50,7 @@ contract VoterContract {
         proposal.voterIndexs[msg.sender] = proposal.voters.length - 1;
     }
 
-    function cancel(uint256 proposalId) public {
+    function cancel(uint256 proposalId) external {
         require(proposalId < proposals.length, "not existed proposalName");
 
         Proposal storage proposal = proposals[proposalId];
@@ -75,7 +75,7 @@ contract VoterContract {
         delete proposal.voterIndexs[msg.sender];
     }
 
-    function winProposal() public view returns (string memory) {
+    function winProposal() external view returns (string memory) {
         uint256 proposalLength = proposals.length;
         require(proposalLength > 0, "no proposals");
         string memory winName = proposals[0].name;
