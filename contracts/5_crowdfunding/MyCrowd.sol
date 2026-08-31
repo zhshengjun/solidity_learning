@@ -21,10 +21,11 @@ contract MyCrowdfunding {
     // 截止时间戳
     uint256 public immutable deadline;
     // 活动最新状态
-    State public latestState;
+    State internal latestState;
 
     // 已众筹金额
     uint256 public raisedAmount;
+    
     // 众筹的明细
     mapping(address => uint256) public contributors;
 
@@ -94,10 +95,12 @@ contract MyCrowdfunding {
         _checkLatestState();
         if (latestState != State.Successed) revert NotSuccessed();
         uint256 amount = raisedAmount;
-
         if (amount == 0) revert NotBalance();
-        raisedAmount = 0;
+
+        // 先改状态
         latestState = State.Withdraw;
+        raisedAmount = 0;
+
         (bool success, ) = msg.sender.call{value: amount}("");
         if (!success) revert ClaimFailed();
     }
