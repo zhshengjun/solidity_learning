@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "contracts/8_delegatecall/CounterV1.sol";
-import "contracts/8_delegatecall/CounterV2.sol";
+import "contracts/8_delegatecall/Proxy/CounterV1.sol";
+import "contracts/8_delegatecall/Proxy/CounterV2.sol";
 
 // Proxy
 contract SimpleProxy {
