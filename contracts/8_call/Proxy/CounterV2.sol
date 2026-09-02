@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "contracts/8_delegatecall/Proxy/CounterV1.sol";
+import "contracts/8_call/Proxy/CounterV1.sol";
 
 // Implementation V2
 contract CounterV2 is CounterV1 {
