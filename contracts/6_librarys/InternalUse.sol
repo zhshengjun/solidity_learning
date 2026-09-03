@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "contracts/6_librarys/InternalLib.sol";
+import {InternalLib} from "./InternalLib.sol";
 
 contract InternalUse {
     using InternalLib for uint256;

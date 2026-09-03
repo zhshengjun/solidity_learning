@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "contracts/6_library/ExternalLib.sol";
+import {ExternalLib} from "./ExternalLib.sol";
 
 contract ExternalUse {
     using ExternalLib for uint256;

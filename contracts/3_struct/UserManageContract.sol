@@ -75,14 +75,14 @@ contract UserManageConstract {
     function queryUserInfo(
         address addr
     )
-        public
-        view
-        returns (
-            string memory name,
-            string memory email,
-            uint256 balance,
-            uint256 registerAt
-        )
+    public
+    view
+    returns (
+        string memory name,
+        string memory email,
+        uint256 balance,
+        uint256 registerAt
+    )
     {
         User storage user = users[addr];
         require(user.exists, "address not register");

@@ -22,7 +22,7 @@ contract Modifier {
     function deposit() public payable {}
 
     function withdraw(uint256 amount) external payable {
-        (bool success, ) = payable(msg.sender).call{value: amount}("");
+        (bool success,) = payable(msg.sender).call{value: amount}("");
         require(success, "ETH transfer failed");
     }
 }

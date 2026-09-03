@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.34;
 
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract BaseContract is ReentrancyGuard, Ownable {
     mapping(address => uint256) balances;
@@ -11,7 +10,7 @@ contract BaseContract is ReentrancyGuard, Ownable {
     event DespoitBalance(address indexed address_, uint256 amount);
     event WithdrawBalance(address indexed address_, uint256 amount);
 
-    bytes32 public constant DEFAULT_BUSINESS_ROLE =    ("MINTER_ROLE");
+    bytes32 public constant DEFAULT_BUSINESS_ROLE = ("MINTER_ROLE");
 
     error InsufficientBalance();
 
@@ -32,7 +31,7 @@ contract BaseContract is ReentrancyGuard, Ownable {
         require(balance > 0, InsufficientBalance());
 
         // 转账
-        (bool success, ) = msg.sender.call{value: balance}("");
+        (bool success,) = msg.sender.call{value: balance}("");
         require(success, Withdraw());
         // 扣除余额
         balances[msg.sender] = 0;
@@ -47,7 +46,7 @@ contract BaseContract is ReentrancyGuard, Ownable {
         // 扣除余额
         balances[msg.sender] = 0;
         // 转账
-        (bool success, ) = msg.sender.call{value: balance}("");
+        (bool success,) = msg.sender.call{value: balance}("");
         require(success, Withdraw());
 
         emit WithdrawBalance(msg.sender, balance);
@@ -59,7 +58,7 @@ contract BaseContract is ReentrancyGuard, Ownable {
         require(balance > 0, InsufficientBalance());
 
         // 转账
-        (bool success, ) = msg.sender.call{value: balance}("");
+        (bool success,) = msg.sender.call{value: balance}("");
         require(success, Withdraw());
         // 扣除余额
         balances[msg.sender] = 0;

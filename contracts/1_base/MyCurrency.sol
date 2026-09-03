@@ -34,14 +34,14 @@ contract MyCurrency {
     }
 
     function overflow(uint256 _value) public pure returns (uint8) {
-        require(type(uint8).max >= _value,"value needs lower than uint8 max");
+        require(type(uint8).max >= _value, "value needs lower than uint8 max");
         uint8 value2 = uint8(_value);
         return uint8(value2);
     }
 
     function transferAddress(address payable toAddress) public payable {
         // 转账原生的代币ETH
-        (bool success, ) = toAddress.call{value: msg.value}("");
+        (bool success,) = toAddress.call{value: msg.value}("");
         require(success, "ETH transfer failed");
     }
 }

@@ -9,11 +9,12 @@ import {ERC20Bridgeable} from "@openzeppelin/contracts/token/ERC20/extensions/dr
 
 contract MyToken is ERC20, ERC20Bridgeable, ERC20Permit, AccessControl {
     address internal constant SUPERCHAIN_TOKEN_BRIDGE = 0x4200000000000000000000000000000000000028;
+
     error Unauthorized();
 
     constructor(address defaultAdmin)
-        ERC20("MyToken", "MTK")
-        ERC20Permit("MyToken")
+    ERC20("MyToken", "MTK")
+    ERC20Permit("MyToken")
     {
         _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
     }
@@ -30,10 +31,10 @@ contract MyToken is ERC20, ERC20Bridgeable, ERC20Permit, AccessControl {
     // The following functions are overrides required by Solidity.
 
     function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC20Bridgeable, AccessControl)
-        returns (bool)
+    public
+    view
+    override(ERC20Bridgeable, AccessControl)
+    returns (bool)
     {
         return super.supportsInterface(interfaceId);
     }

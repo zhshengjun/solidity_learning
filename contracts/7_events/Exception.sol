@@ -18,7 +18,7 @@ contract Exception {
         balances[msg.sender] -= amount;
     }
 
-     function withdraReqired(uint256 amount) public { // 23950
+    function withdraReqired(uint256 amount) public { // 23950
 
         require(amount <= balances[msg.sender], InsufficientBalance());
         balances[msg.sender] -= amount;
@@ -32,13 +32,13 @@ contract Exception {
 
     function withdrawRevert(uint256 amount) public {// 24236
 
-        if(amount <= balances[msg.sender]) revert InsufficientBalance();
+        if (amount <= balances[msg.sender]) revert InsufficientBalance();
         balances[msg.sender] -= amount;
     }
 
     function withdrawRevertStr(uint256 amount) public {// 24280 
 
-        if(amount <= balances[msg.sender]) revert("insufficient balance");
+        if (amount <= balances[msg.sender]) revert("insufficient balance");
         balances[msg.sender] -= amount;
     }
 }

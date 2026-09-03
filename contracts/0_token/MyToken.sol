@@ -42,7 +42,7 @@ contract MyToken is ERC20 {
             ethDeposits[msg.sender] = deposited - amount;
         }
 
-        (bool success, ) = msg.sender.call{value: amount}("");
+        (bool success,) = msg.sender.call{value: amount}("");
         if (!success) revert EthTransferFailed();
     }
 

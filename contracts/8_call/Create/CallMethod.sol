@@ -8,7 +8,7 @@ contract TargetContract {
     event ValueChanged(address indexed caller, uint256 newValue);
 
     function updateValue(uint256 _value) external {
-        value = _value;
+     value = _value;
         sender = msg.sender;
         emit ValueChanged(msg.sender, _value);
     }
@@ -22,6 +22,7 @@ contract CallMethod {
     mapping(address => uint256) balances;
 
     error CallError();
+
     event CallResult(address indexed target, bool success, bytes data);
 
     function deposit() external payable {
@@ -33,7 +34,7 @@ contract CallMethod {
         // 扣减余额
         balances[msg.sender] -= amount;
 
-        (bool success, ) = msg.sender.call{value: amount}("");
+        (bool success,) = msg.sender.call{value: amount}("");
 
         if (!success) {
             revert CallError();

@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.34;
 
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {ERC2981} from "@openzeppelin/contracts/token/common/ERC2981.sol";
 
-contract MyNFT is ERC721URIStorage, Ownable {
+contract MyNFT is ERC721URIStorage, ERC2981, Ownable {
     // Token ID计数器
     uint256 private _tokenIdCounter;
 
@@ -56,6 +57,9 @@ contract MyNFT is ERC721URIStorage, Ownable {
         // 设置元数据URI
         _setTokenURI(newTokenId, uri);
 
+        // 本次铸造者是这枚 NFT 的创作者，因此接收该 token 的 5% 版税。
+        _setTokenRoyalty(newTokenId, msg.sender, 500);
+
         // 触发事件
         emit NFTMinted(msg.sender, newTokenId, uri);
 
@@ -78,7 +82,7 @@ contract MyNFT is ERC721URIStorage, Ownable {
         uint256 balance = address(this).balance;
         require(balance > 0, "No balance to withdraw");
 
-        (bool success, ) = payable(owner()).call{value: balance}("");
+        (bool success,) = payable(owner()).call{value: balance}("");
         require(success, "withdraw failed");
     }
 
@@ -89,5 +93,11 @@ contract MyNFT is ERC721URIStorage, Ownable {
      */
     function setMintPrice(uint256 newPrice) public onlyOwner {
         mintPrice = newPrice;
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(ERC721URIStorage, ERC2981) returns (bool) {
+        return super.supportsInterface(interfaceId);
     }
 }

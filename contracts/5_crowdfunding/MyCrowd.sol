@@ -25,7 +25,7 @@ contract MyCrowdfunding {
 
     // 已众筹金额
     uint256 public raisedAmount;
-    
+
     // 众筹的明细
     mapping(address => uint256) public contributors;
 
@@ -86,7 +86,7 @@ contract MyCrowdfunding {
 
         contributors[msg.sender] = 0;
 
-        (bool success, ) = msg.sender.call{value: amount}("");
+        (bool success,) = msg.sender.call{value: amount}("");
         if (!success) revert ClaimFailed();
     }
 
@@ -101,7 +101,7 @@ contract MyCrowdfunding {
         latestState = State.Withdraw;
         raisedAmount = 0;
 
-        (bool success, ) = msg.sender.call{value: amount}("");
+        (bool success,) = msg.sender.call{value: amount}("");
         if (!success) revert ClaimFailed();
     }
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "contracts/6_librarys/MixLib.sol";
+import {MixLib} from "./MixLib.sol";
 
 contract MixlUse {
     using MixLib for uint256;

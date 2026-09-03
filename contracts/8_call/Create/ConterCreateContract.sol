@@ -49,7 +49,7 @@ contract ContractFactory {
 
     function _initCode(address deployer) internal pure returns (bytes memory) {
         return
-            abi.encodePacked(
+                            abi.encodePacked(
                 type(ConterCreateContract).creationCode,
                 abi.encode(deployer)
             );
