@@ -12,6 +12,7 @@ contract Voting {
     }
 
     function vote(string calldata candidate) external {
+        // 这里无限制的投票
         votes[candidate] += 1;
     }
 
